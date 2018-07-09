@@ -1,0 +1,23 @@
+label
+{
+    display: inline-block;
+    width: 120px;
+    vertical-align: middle;
+}
+
+input
+{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+input.ng-invalid
+{
+    border: solid red 2px;
+}
+
+textarea
+{
+    width: 300px;
+    height: 80px;
+}
