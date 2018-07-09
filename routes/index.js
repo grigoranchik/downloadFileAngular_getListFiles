@@ -41,6 +41,7 @@ router.post('/sendFile', function (req, res) {
         if (errors.length == 0) {
             var out = fs.createWriteStream(uploadFile.path);
             part.pipe(out);
+            res.end('Download are successful!');
         }
         else {
             part.resume();

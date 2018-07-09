@@ -3,8 +3,11 @@
 
 <head>
     <meta charset="utf-8">
-    <!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>-->
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>-->
     <!--<link rel="stylesheet" href="/index/static/cssStartPage.css" type="text/css" />
     <script type="text/javascript" src="/index/static/angularModule.js"></script>-->
 
@@ -12,11 +15,27 @@
 
 <body ng-app="mainModule">
 <div ng-controller="mainController">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label for="password" class="col-sm-2 control-label">Пароль</label>
+            <div class="col-xs-2">
+                <input id="password" type="text" class="form-control" name="password" required /><br />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="file" class="col-sm-2 control-label">Файл</label>
+            <div class="col-xs-2">
+                <input type="file" id="file" name="file" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="btn" class="col-sm-2 control-label"></label>
+            <div class="col-xs-2">
+                <input type="button" id="btn" class="btn btn-primary btn-md" value="GO" />
+            </div>
+        </div>
 
-        <input id="password" type="text" name="password" required /><br />
-        <input type="file" id="file" name="file" required/>
-        <br/>
-        <input type="button" id="btn" value="GO" />
+    </div>
 
     <script>
         $(document).on('click', '#btn', function(){
@@ -32,8 +51,7 @@
                 processData: false,
                 type: 'POST',
                 success: function (response) {
-                    debugger;
-                    console.log(response);
+                    alert(response);
                 },
                 xhr: function () {
                     var xhr = $.ajaxSettings.xhr();
