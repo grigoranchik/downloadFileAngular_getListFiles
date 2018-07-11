@@ -10,6 +10,7 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
     <link rel="stylesheet" href="/index/static/cssStartPage.css" type="text/css" />
     <script type="text/javascript" src="/index/static/angularModule.js"></script>
+    <script type="text/javascript" src="/index/static/fileExtensionFilter.js"></script>
 
 </head>
 
@@ -47,7 +48,7 @@
             <strong><label for="submitDebugText1">Submit result:</label></strong><br />
             <ul id="submitDebugText1" ng-repeat="val in submitResult">
                 <li>
-                    <a href="/index/getFile/{{val}}" download>{{val}}</a>
+                    <img src="{{val | fileExtensionFilter }}" style="height: 50px;"><a href="/index/getFile/{{val}}" download>{{val}}</a>
                 </li>
             </ul>
             <br />

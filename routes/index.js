@@ -1,17 +1,23 @@
 var bodyParser = require('body-parser');
 var multiparty = require('multiparty');
 var express = require('express');
+var crypto = require('crypto');
 var path = require('path');
 var fs = require('fs');
 
-/*var multiparty = require('connect-multiparty');
-var multipartyMiddleware = multiparty();*/
-var passworws = {
-    passToDownloads: '999',
-    passToGetListFiles: '999'
-}
-
+var password;
 var router = express.Router();
+
+fs.readFile('./resources/hashKey', function(error, data){
+    password = data.toString('utf8');
+})
+
+var sequrityFunc = function (secret) {
+    const hash = crypto.createHash('md5', secret)
+        .digest('hex');
+    return hash;
+}
+//console.log(sequrityFunc());
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
@@ -25,7 +31,7 @@ router.get('/', function (req, res, next) {
 
 router.get('/listOfFiles/:id', function (req, res) {
 
-    if(req.params.id != passworws.passToGetListFiles){
+    if(sequrityFunc(req.params.id) != password){
         res.status(400).end('Error password!');
         return;
     }
@@ -51,15 +57,12 @@ router.get('/listOfFiles/:id', function (req, res) {
 });
 
 router.get('/getFile/:id', function (req, res) {
-
     function objectSend(massOfFiles) {
         this.massOfFiles = massOfFiles;
     };
-
     var massSend=[];
 
     fs.readFile('./uploadDir/' + req.params.id, function(error, data){
-
         if(error){
 
             res.statusCode = 404;
@@ -79,12 +82,12 @@ router.post('/sendFile', function (req, res) {
     var errors = [];
 
     form.on('field', function (name, value) {
-        controlPassword = parseInt(value);
+        controlPassword = sequrityFunc(parseInt(value));
     });
 
 
     form.on('part', function (part) {
-        if(controlPassword != passworws.passToDownloads) {
+        if(controlPassword != password) {
             res.end('Error password!');
             return;
         }
@@ -106,19 +109,5 @@ router.post('/sendFile', function (req, res) {
     form.parse(req);
 });
 
-/*router.post('/sendFile', multipartyMiddleware, function (req, res) {
-    var file = req.files.file;
-    req.files
-    console.log(file.name);
-    console.log(file.type);
-    console.log(file.path);
-
-    fs.writeFile('./uploadDir/' + file.name, file, function (err) {
-        if (err) {
-            return console.warn(err);
-        }
-        console.log("The file: " + file.name + " was saved to " + file.path);
-    });
-});*/
 
 module.exports = router;

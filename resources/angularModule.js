@@ -3,20 +3,32 @@ var myApp = angular.module("mainModule", [])
 
 
         $scope.modelPassword;
+        $scope.password;
         $scope.submitResult;
 
         var bar;
+
+        $scope.$watch(function () {
+            return  $scope.modelPassword;
+        }, function (new_, old_) {
+            $scope.password = new_;
+        })
+
         $scope.getFile = function (event) {
             bar = event.files[0];
             //debugger;
         };
 
         $scope.submitData = function () {
-            if ($scope.modelPassword == undefined || bar == undefined) {
+            if ($scope.password == undefined || bar == undefined) {
                 return;
             }
             var formData = new FormData();
-            formData.append("password", $scope.modelPassword);
+
+            if($scope.password == undefined){
+                $scope.password = prompt('Введите пароль');
+            }
+            formData.append("password", $scope.password);
             formData.append("myFile", bar);
 
             $http.post('/index/sendFile', formData, {
@@ -32,10 +44,11 @@ var myApp = angular.module("mainModule", [])
         };
 
         $scope.getListFiles = function () {
-            var pass = prompt('Введите пароль?');
-            if (pass== ''){pass="_"};
+            if($scope.password == undefined){
+                $scope.password = prompt('Введите пароль');
+            }
 
-            $http.get('/index/listOfFiles/' + pass.toString()).success(function (response) {
+            $http.get('/index/listOfFiles/' + $scope.password.toString()).success(function (response) {
                 $scope.submitResult = response.massOfFiles;
                 //debugger;
             }).error(function (data, status, headers, config) {
