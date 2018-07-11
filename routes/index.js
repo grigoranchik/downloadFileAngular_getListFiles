@@ -4,6 +4,13 @@ var express = require('express');
 var path = require('path');
 var fs = require('fs');
 
+/*var multiparty = require('connect-multiparty');
+var multipartyMiddleware = multiparty();*/
+var passworws = {
+    passToDownloads: '999',
+    passToGetListFiles: '999'
+}
+
 var router = express.Router();
 
 router.use(bodyParser.json());
@@ -14,6 +21,55 @@ router.use('/static', express.static('resources'));
 //
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Express'});
+});
+
+router.get('/listOfFiles/:id', function (req, res) {
+
+    if(req.params.id != passworws.passToGetListFiles){
+        res.status(400).end('Error password!');
+        return;
+    }
+
+    function objectSend(massOfFiles) {
+        this.massOfFiles = massOfFiles;
+    };
+
+    var massSend=[];
+
+    fs.readdir('./uploadDir', function(err, items) {
+        var strPath = '';
+
+        if (items.length != undefined){
+            var objSend = new objectSend(items);
+            res.send(objSend);
+        } else {
+            var it = [];    //если папка пустая оправляем пустой массив
+            var objSend = new objectSend(it);
+            res.send(objSend);
+        }
+    });
+});
+
+router.get('/getFile/:id', function (req, res) {
+
+    function objectSend(massOfFiles) {
+        this.massOfFiles = massOfFiles;
+    };
+
+    var massSend=[];
+
+    fs.readFile('./uploadDir/' + req.params.id, function(error, data){
+
+        if(error){
+
+            res.statusCode = 404;
+            res.end("Ресурс не найден!");
+        }
+        else{
+            res.end(data);
+        }
+        return;
+    })
 });
 
 router.post('/sendFile', function (req, res) {
@@ -28,8 +84,7 @@ router.post('/sendFile', function (req, res) {
 
 
     form.on('part', function (part) {
-        if(controlPassword != '999') {
-            //res.write('dsf');
+        if(controlPassword != passworws.passToDownloads) {
             res.end('Error password!');
             return;
         }
@@ -50,5 +105,20 @@ router.post('/sendFile', function (req, res) {
 
     form.parse(req);
 });
+
+/*router.post('/sendFile', multipartyMiddleware, function (req, res) {
+    var file = req.files.file;
+    req.files
+    console.log(file.name);
+    console.log(file.type);
+    console.log(file.path);
+
+    fs.writeFile('./uploadDir/' + file.name, file, function (err) {
+        if (err) {
+            return console.warn(err);
+        }
+        console.log("The file: " + file.name + " was saved to " + file.path);
+    });
+});*/
 
 module.exports = router;

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/node_aploadFiles.iml" filepath="$PROJECT_DIR$/node_aploadFiles.iml" />
+      <module fileurl="file://$PROJECT_DIR$/node_aploadFiles_ajax.iml" filepath="$PROJECT_DIR$/node_aploadFiles_ajax.iml" />
     </modules>
   </component>
 </project>
