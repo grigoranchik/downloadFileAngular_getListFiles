@@ -75,6 +75,20 @@ router.get('/getFile/:id', function (req, res) {
     })
 });
 
+router.get('/delFile/:id', function (req, res) {
+    fs.unlinkSync('./uploadDir/' + req.params.id, function(error, data){
+        if(error){
+
+            res.statusCode = 404;
+            res.end("Ресурс не найден!");
+        }
+        else{
+            res.end(data);
+        }
+        return;
+    });
+});
+
 router.post('/sendFile', function (req, res) {
     var form = new multiparty.Form();
     var controlPassword;

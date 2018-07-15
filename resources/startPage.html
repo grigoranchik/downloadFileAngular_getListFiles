@@ -1,32 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="mainModule">
 
 <head>
     <meta charset="utf-8" name="viewport" >
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <script type="text/javascript" src="/index/static/jquery.js"></script>
+    <link rel="stylesheet" href="/index/static/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/index/static/bootstrap-theme.min.css" type="text/css">
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>-->
+    <script type="text/javascript" src="/index/static/angular.min.js"></script>
+    <script type="text/javascript" src="/index/static/html2canvas.js"></script>
+    <script type="text/javascript" src="/index/static/html2canvasMin.js"></script>
+
+
     <link rel="stylesheet" href="/index/static/cssStartPage.css" type="text/css" />
     <script type="text/javascript" src="/index/static/angularModule.js"></script>
     <script type="text/javascript" src="/index/static/fileExtensionFilter.js"></script>
 
 </head>
 
-<body ng-app="mainModule">
+<body>
+<div class="overlay">
+    <div class="modal">I'm the modal window!</div>
+</div>
+
 <div ng-controller="mainController">
+    <!--
+    <canvas id="canvas"></canvas>-->
     <div class="form-horizontal">
         <div class="form-group">
             <label for="password" class="col-sm-2 control-label">Пароль</label>
             <div class="col-xs-2">
-                <input id="password" type="text" class="form-control" name="password" ng-model="modelPassword" required /><br />
+                <input id="password" type="text" class="form-control" name="password" ng-model="modelPassword" required />
+
             </div>
+            <button onclick="report()">Take screenshot</button>
+            <script>
+
+                $('.modal').css('zIndex', 99999);
+                function report() {
+                    html2canvas(document.querySelector("body")).then(canvas => {
+                        //debugger;
+                        let pngUrl = canvas.toDataURL("image/png");
+                        let img = document.querySelector(".screen");
+
+                        img.onload = function(){
+                            var canvas = document.getElementById('canvas');
+                            canvas.style.position = 'absolute';
+                            canvas.style['z-index'] = 999;
+                            canvas.width = $(window).width();
+                            canvas.height = $(window).height();
+                            canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                            document.body.appendChild(canvas);
+
+                        }
+                        img.src = pngUrl;
+                        //debugger;
+                    });
+
+                }
+            </script>
+            <style>
+                .container {
+                    margin-top: 10px;
+                    border: solid 1px black;
+
+                }
+                html, body {
+                    margin: 0;
+                    min-height: 100%;
+                }
+
+
+                .modal {
+                    positon:absolute;
+                    top: 0;
+                    left: 0;
+                }
+                .overlay {
+                    position:relative;
+                }
+
+                /*#canvasOverload{position:absolute;z-index:999;}*/
+            </style>
+            <div class="container" hidden>
+                <img width="75%" class="screen" >
+            </div>
+
         </div>
         <div class="form-group">
             <label for="file" class="col-sm-2 control-label">Файл</label>
             <div class="col-xs-2">
-                <input type="file" id="file" name="file" onchange="angular.element(this).scope().getFile(this)" required/>
+                <input type="file" id="file" name="file" file-read="" multiple required/>
             </div>
         </div>
         <div class="form-group">
@@ -35,6 +99,16 @@
                 <button type="submit" id="btn" class="btn btn-primary btn-md" ng-click="submitData()">Submit</button>
             </div>
         </div>
+
+        <div class="container" hidden>
+            <p>Progress bar:</p>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" ng-style="{'width':onprogress + '%'}">
+                    {{onprogress}}%
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
             <label for="btnGetList" class="col-sm-2 control-label"></label>
             <div class="col-xs-2">
@@ -48,7 +122,10 @@
             <strong><label for="submitDebugText1">Submit result:</label></strong><br />
             <ul id="submitDebugText1" ng-repeat="val in submitResult">
                 <li>
-                    <img src="{{val | fileExtensionFilter }}" style="height: 50px;"><a href="/index/getFile/{{val}}" download>{{val}}</a>
+                    <img src="{{val | fileExtensionFilter }}" style="height: 50px;">
+                    <a href="/index/getFile/{{val}}" download>
+                        {{val}} <a href="/index/delFile/{{val}}" ng-click="delFile(val)"> del</a>
+                    </a>
                 </li>
             </ul>
             <br />
@@ -57,6 +134,7 @@
     <br />
 
 </div>
+
 </body>
 
 </html>
